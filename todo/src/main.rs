@@ -1,9 +1,4 @@
-use axum::{
-    extract::Extension,
-    response::{Html, IntoResponse},
-    routing::get,
-    Json, Router,
-};
+use axum::{extract::Extension, response::IntoResponse, routing::get, Json, Router};
 use serde::Serialize;
 use std::{
     collections::HashMap,
@@ -13,12 +8,14 @@ use std::{
 use tower_http::add_extension::AddExtensionLayer;
 use uuid::Uuid;
 
+mod root;
+
 #[tokio::main]
 async fn main() {
     let db = Db::default();
 
     let app = Router::new()
-        .route("/", get(root))
+        .route("/", get(root::root))
         .route("/todos", get(index))
         .layer(AddExtensionLayer::new(db));
 
@@ -28,10 +25,6 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
-}
-
-async fn root() -> Html<&'static str> {
-    Html("Hello, World!")
 }
 
 #[derive(Clone, Serialize)]
