@@ -1,4 +1,4 @@
-use axum::{handler::get, Router};
+use axum::{response::Html, routing::get, Router};
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -11,6 +11,6 @@ async fn main() {
         .unwrap();
 }
 
-async fn root() -> &'static str {
-    "Hello, world!"
+async fn root() -> Html<&'static str> {
+    Html("Hello, World!")
 }
