@@ -1,5 +1,7 @@
-use axum::{extract::Extension, response::IntoResponse, routing::get, Json, Router};
-use serde::Serialize;
+use axum::{
+    extract::Extension, http::StatusCode, response::IntoResponse, routing::get, Json, Router,
+};
+use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -16,7 +18,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(root::root))
-        .route("/todos", get(index))
+        .route("/todos", get(index).post(create))
         .layer(AddExtensionLayer::new(db));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -42,4 +44,21 @@ async fn index(Extension(db): Extension<Db>) -> impl IntoResponse {
     let todos = todos.values().cloned().collect::<Vec<_>>();
 
     Json(todos)
+}
+
+#[derive(Deserialize)]
+struct CreateTodo {
+    text: String,
+}
+
+async fn create(Json(input): Json<CreateTodo>, Extension(db): Extension<Db>) -> impl IntoResponse {
+    let todo = Todo {
+        id: Uuid::new_v4(),
+        text: input.text,
+        completed: false,
+    };
+
+    db.write().unwrap().insert(todo.id, todo.clone());
+
+    (StatusCode::CREATED, Json(todo))
 }
