@@ -23,7 +23,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root::root))
         .route("/todos", get(index).post(create))
-        .route("/todos/:id", patch(update))
+        .route("/todos/:id", patch(update).delete(delete))
         .layer(AddExtensionLayer::new(db));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -92,4 +92,12 @@ async fn update(
     db.write().unwrap().insert(todo.id, todo.clone());
 
     Ok(Json(todo))
+}
+
+async fn delete(Path(id): Path<Uuid>, Extension(db): Extension<Db>) -> impl IntoResponse {
+    if db.write().unwrap().remove(&id).is_some() {
+        StatusCode::NO_CONTENT
+    } else {
+        StatusCode::NOT_FOUND
+    }
 }
