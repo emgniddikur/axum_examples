@@ -1,5 +1,9 @@
 use axum::{
-    extract::Extension, http::StatusCode, response::IntoResponse, routing::get, Json, Router,
+    extract::{Extension, Path},
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, patch},
+    Json, Router,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -19,6 +23,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root::root))
         .route("/todos", get(index).post(create))
+        .route("/todos/:id", patch(update))
         .layer(AddExtensionLayer::new(db));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -61,4 +66,30 @@ async fn create(Json(input): Json<CreateTodo>, Extension(db): Extension<Db>) -> 
     db.write().unwrap().insert(todo.id, todo.clone());
 
     (StatusCode::CREATED, Json(todo))
+}
+
+#[derive(Deserialize)]
+struct UpdateTodo {
+    text: String,
+    completed: bool,
+}
+
+async fn update(
+    Path(id): Path<Uuid>,
+    Json(input): Json<UpdateTodo>,
+    Extension(db): Extension<Db>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let mut todo = db
+        .read()
+        .unwrap()
+        .get(&id)
+        .cloned()
+        .ok_or(StatusCode::NOT_FOUND)?;
+
+    todo.text = input.text;
+    todo.completed = input.completed;
+
+    db.write().unwrap().insert(todo.id, todo.clone());
+
+    Ok(Json(todo))
 }
