@@ -1,0 +1,4 @@
+CREATE TABLE todos (
+    id UUID PRIMARY KEY,
+    name TEXT NOT NULL
+)
