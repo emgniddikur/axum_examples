@@ -11,7 +11,7 @@ use axum::{
     AddExtensionLayer, Json, Router,
 };
 use std::net::SocketAddr;
-use todo::{QueryRoot, TodoSchema};
+use todo::{Mutation, QueryRoot, TodoSchema};
 
 async fn graphql_playground() -> impl IntoResponse {
     Html(playground_source(GraphQLPlaygroundConfig::new("/")))
@@ -23,7 +23,7 @@ async fn graphql_handler(schema: Extension<TodoSchema>, req: Json<Request>) -> J
 
 #[tokio::main]
 async fn main() {
-    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription).finish();
+    let schema = Schema::build(QueryRoot, Mutation, EmptySubscription).finish();
 
     let app = Router::new()
         .route("/", get(graphql_playground).post(graphql_handler))
