@@ -11,6 +11,12 @@ enum PhotoCategory {
     Graphic,
 }
 
+impl Default for PhotoCategory {
+    fn default() -> Self {
+        PhotoCategory::Portrait
+    }
+}
+
 #[derive(Clone, SimpleObject)]
 struct Photo {
     id: usize,
@@ -39,6 +45,7 @@ impl Query {
 struct PostPhotoInput {
     name: String,
     description: String,
+    #[graphql(default_with = "PhotoCategory::default()")]
     category: PhotoCategory,
 }
 
