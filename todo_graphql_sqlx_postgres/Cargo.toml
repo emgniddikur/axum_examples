@@ -1,0 +1,14 @@
+[package]
+name = "todo_graphql_sqlx_postgres"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-graphql = "3.0"
+axum = "0.4.4"
+once_cell = "1.10.0"
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }
+uuid = { version = "0.8", features = ["serde", "v4"] }
