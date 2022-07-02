@@ -1,0 +1,30 @@
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(15) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE UNIQUE INDEX users_username_lower_key on users (lower(username));
+
+CREATE TABLE tweets (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    text VARCHAR(140) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE comments (
+    id UUID PRIMARY KEY,
+    tweet_id UUID NOT NULL REFERENCES tweets(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NUlL,
+    parent_comment_id UUID REFERENCES comments(id) ON DELETE CASCADE,
+    text VARCHAR(140) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE follows (
+    PRIMARY KEY (following_id, followed_id),
+    following_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    followed_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
