@@ -734,6 +734,7 @@ dependencies = [
  "async-graphql",
  "async-graphql-axum",
  "axum",
+ "once_cell",
  "tokio",
 ]
 
