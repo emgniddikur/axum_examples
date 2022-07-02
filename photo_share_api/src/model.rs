@@ -1,12 +1,22 @@
-use async_graphql::{EmptySubscription, Object, Schema, SimpleObject};
+use async_graphql::{EmptySubscription, Enum, Object, Schema, SimpleObject};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
+
+#[derive(Enum, Clone, Copy, PartialEq, Eq)]
+enum PhotoCategory {
+    Selfie,
+    Portrait,
+    Action,
+    Landscape,
+    Graphic,
+}
 
 #[derive(Clone, SimpleObject)]
 struct Photo {
     id: usize,
     name: String,
     description: String,
+    category: PhotoCategory,
 }
 
 static SEQUENCE_ID: Lazy<Mutex<usize>> = Lazy::new(|| Mutex::new(1));
@@ -29,13 +39,19 @@ pub struct Mutation;
 
 #[Object]
 impl Mutation {
-    async fn post_photo(&self, name: String, description: String) -> Photo {
+    async fn post_photo(
+        &self,
+        name: String,
+        description: String,
+        category: PhotoCategory,
+    ) -> Photo {
         let mut id = SEQUENCE_ID.lock().unwrap();
 
         let photo = Photo {
             id: *id,
             name,
             description,
+            category,
         };
 
         PHOTOS.lock().unwrap().push(photo.clone());
