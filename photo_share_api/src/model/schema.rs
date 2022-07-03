@@ -1,29 +1,7 @@
-use async_graphql::{EmptySubscription, Enum, InputObject, Object, Schema, SimpleObject};
+use super::photo::{Photo, PhotoCategory};
+use async_graphql::{EmptySubscription, InputObject, Object, Schema};
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
-
-#[derive(Enum, Clone, Copy, PartialEq, Eq)]
-enum PhotoCategory {
-    Selfie,
-    Portrait,
-    Action,
-    Landscape,
-    Graphic,
-}
-
-impl Default for PhotoCategory {
-    fn default() -> Self {
-        PhotoCategory::Portrait
-    }
-}
-
-#[derive(Clone, SimpleObject)]
-struct Photo {
-    id: usize,
-    name: String,
-    description: String,
-    category: PhotoCategory,
-}
 
 static SEQUENCE_ID: Lazy<Mutex<usize>> = Lazy::new(|| Mutex::new(1));
 static PHOTOS: Lazy<Mutex<Vec<Photo>>> = Lazy::new(|| Mutex::new(vec![]));

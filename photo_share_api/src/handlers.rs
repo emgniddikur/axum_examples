@@ -1,4 +1,4 @@
-use crate::model::ApiSchema;
+use crate::model::schema::ApiSchema;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{

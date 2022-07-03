@@ -4,7 +4,7 @@ mod model;
 use async_graphql::{EmptySubscription, Schema};
 use axum::{extract::Extension, routing::get, Router};
 use handlers::{graphql_handler, graphql_playground};
-use model::{Mutation, Query};
+use model::schema::{Mutation, Query};
 use std::net::SocketAddr;
 
 #[tokio::main]
