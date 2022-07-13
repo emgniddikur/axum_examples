@@ -898,6 +898,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "env_logger",
+ "log",
  "sqlx",
  "tokio",
 ]
