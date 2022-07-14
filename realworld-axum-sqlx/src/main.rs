@@ -1,6 +1,6 @@
 use axum::{response::Html, routing::get, Router};
 use clap::Parser;
-use sqlx::postgres::PgPoolOptions;
+use sqlx::{migrate, postgres::PgPoolOptions};
 use std::net::SocketAddr;
 
 use realworld_axum_sqlx::config::Config;
@@ -13,6 +13,8 @@ async fn main() -> anyhow::Result<()> {
     println!("{}", config.database_url);
 
     let pool = PgPoolOptions::new().connect(&config.database_url).await?;
+
+    migrate!().run(&pool).await?;
 
     let app = Router::new().route("/", get(root));
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
