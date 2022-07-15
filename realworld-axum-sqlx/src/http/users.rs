@@ -5,13 +5,13 @@ use axum::{
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
-use sqlx::{query_as, query_scalar};
+use sqlx::{query, query_as, query_scalar};
 use uuid::Uuid;
 
 pub fn router() -> Router {
     Router::new()
         .route("/api/users", get(list_user).post(create_user))
-        .route("/api/users/:user_id", get(get_user))
+        .route("/api/users/:user_id", get(get_user).delete(delete_user))
 }
 
 #[derive(Serialize, Deserialize)]
@@ -42,6 +42,14 @@ async fn get_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) -> Json<User
 async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<User>) {
     query_scalar!(r#"insert into "user" default values"#)
         .fetch_one(&ctx.pool)
+        .await
+        // TODO: error handling
+        .unwrap();
+}
+
+async fn delete_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) {
+    query!(r#"delete from "user" where user_id = $1"#, id)
+        .execute(&ctx.pool)
         .await
         // TODO: error handling
         .unwrap();
