@@ -1,1 +1,1 @@
--- Add migration script here
+create table "user" (user_id uuid primary key)
