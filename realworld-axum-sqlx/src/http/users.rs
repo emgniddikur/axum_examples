@@ -10,9 +10,9 @@ use uuid::Uuid;
 
 pub fn router() -> Router {
     Router::new()
-        .route("/api/users", get(list_user).post(create_user))
+        .route("/users", get(list_user).post(create_user))
         .route(
-            "/api/users/:user_id",
+            "/users/:user_id",
             get(get_user).patch(update_user).delete(delete_user),
         )
 }
