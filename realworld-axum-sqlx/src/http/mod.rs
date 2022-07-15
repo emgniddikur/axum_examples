@@ -1,3 +1,5 @@
+mod users;
+
 use crate::config::Config;
 use anyhow::Context;
 use axum::{response::Html, routing::get, Router};
