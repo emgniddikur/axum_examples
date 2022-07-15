@@ -6,7 +6,7 @@ create collation case_insensitive (
     deterministic = false
 );
 
-create table "user" (
+create table users (
     user_id uuid primary key default uuid_generate_v4(),
     username text collate "case_insensitive" unique not null
 )
