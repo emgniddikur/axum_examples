@@ -11,7 +11,10 @@ use uuid::Uuid;
 pub fn router() -> Router {
     Router::new()
         .route("/api/users", get(list_user).post(create_user))
-        .route("/api/users/:user_id", get(get_user).delete(delete_user))
+        .route(
+            "/api/users/:user_id",
+            get(get_user).patch(update_user).delete(delete_user),
+        )
 }
 
 #[derive(Serialize, Deserialize)]
@@ -51,6 +54,27 @@ async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<CreateUser>) {
         .await
         // TODO: error handling
         .unwrap();
+}
+
+#[derive(Deserialize)]
+struct UpdateUser {
+    username: String,
+}
+
+async fn update_user(
+    ctx: Extension<ApiContext>,
+    Path(id): Path<Uuid>,
+    Json(req): Json<UpdateUser>,
+) {
+    query!(
+        r#"update "user" set username = $2 where user_id = $1"#,
+        id,
+        req.username
+    )
+    .execute(&ctx.pool)
+    .await
+    // TODO: error handling
+    .unwrap();
 }
 
 async fn delete_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) {
