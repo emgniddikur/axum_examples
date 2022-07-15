@@ -1,4 +1,4 @@
-use axum::{response::IntoResponse, routing::get, Json, Router};
+use axum::{routing::get, Json, Router};
 use serde::{Deserialize, Serialize};
 
 pub fn router() -> Router {
@@ -10,7 +10,7 @@ struct User {
     username: String,
 }
 
-async fn list_user() -> impl IntoResponse {
+async fn list_user() -> Json<Vec<User>> {
     Json(vec![User {
         username: "foo".to_string(),
     }])
