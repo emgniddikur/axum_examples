@@ -5,7 +5,7 @@ use axum::{
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
-use sqlx::{query, query_as, query_scalar};
+use sqlx::{query, query_as};
 use uuid::Uuid;
 
 pub fn router() -> Router {
@@ -40,8 +40,8 @@ async fn get_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) -> Json<User
 }
 
 async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<User>) {
-    query_scalar!(r#"insert into "user" default values"#)
-        .fetch_one(&ctx.pool)
+    query!(r#"insert into "user" default values"#)
+        .execute(&ctx.pool)
         .await
         // TODO: error handling
         .unwrap();
