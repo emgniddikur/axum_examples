@@ -22,5 +22,6 @@ async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<User>) {
     query_scalar!(r#"insert into "user" default values"#)
         .fetch_one(&ctx.pool)
         .await
+        // TODO: error handling
         .unwrap();
 }
