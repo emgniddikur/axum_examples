@@ -1,21 +1,38 @@
 use crate::http::ApiContext;
-use axum::{extract::Extension, routing::get, Json, Router};
+use axum::{
+    extract::{Extension, Path},
+    routing::get,
+    Json, Router,
+};
 use serde::{Deserialize, Serialize};
-use sqlx::query_scalar;
+use sqlx::{query_as, query_scalar};
+use uuid::{uuid, Uuid};
 
 pub fn router() -> Router {
-    Router::new().route("/api/users", get(list_user).post(create_user))
+    Router::new()
+        .route("/api/users", get(list_user).post(create_user))
+        .route("/api/users/:user_id", get(get_user))
 }
 
 #[derive(Serialize, Deserialize)]
 struct User {
-    username: String,
+    user_id: Uuid,
 }
 
 async fn list_user() -> Json<Vec<User>> {
     Json(vec![User {
-        username: "foo".to_string(),
+        user_id: uuid!("00000000-0000-0000-0000-000000000000"),
     }])
+}
+
+async fn get_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) -> Json<User> {
+    let user = query_as!(User, r#"select * from "user" where user_id = $1"#, id)
+        .fetch_one(&ctx.pool)
+        .await
+        // TODO: error handling
+        .unwrap();
+
+    Json(user)
 }
 
 async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<User>) {
