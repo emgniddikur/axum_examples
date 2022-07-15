@@ -6,7 +6,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use sqlx::{query_as, query_scalar};
-use uuid::{uuid, Uuid};
+use uuid::Uuid;
 
 pub fn router() -> Router {
     Router::new()
@@ -19,10 +19,14 @@ struct User {
     user_id: Uuid,
 }
 
-async fn list_user() -> Json<Vec<User>> {
-    Json(vec![User {
-        user_id: uuid!("00000000-0000-0000-0000-000000000000"),
-    }])
+async fn list_user(ctx: Extension<ApiContext>) -> Json<Vec<User>> {
+    let users = query_as!(User, r#"select * from "user""#)
+        .fetch_all(&ctx.pool)
+        .await
+        // TODO: error handling
+        .unwrap();
+
+    Json(users)
 }
 
 async fn get_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) -> Json<User> {
