@@ -17,6 +17,7 @@ pub fn router() -> Router {
 #[derive(Serialize, Deserialize)]
 struct User {
     user_id: Uuid,
+    username: String,
 }
 
 async fn list_user(ctx: Extension<ApiContext>) -> Json<Vec<User>> {
@@ -39,8 +40,13 @@ async fn get_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) -> Json<User
     Json(user)
 }
 
-async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<User>) {
-    query!(r#"insert into "user" default values"#)
+#[derive(Deserialize)]
+struct CreateUser {
+    username: String,
+}
+
+async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<CreateUser>) {
+    query!(r#"insert into "user" (username) values ($1)"#, req.username)
         .execute(&ctx.pool)
         .await
         // TODO: error handling
