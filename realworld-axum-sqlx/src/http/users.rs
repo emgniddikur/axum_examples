@@ -10,9 +10,9 @@ use uuid::Uuid;
 
 pub fn router() -> Router {
     Router::new()
-        .route("/api/users", get(list_user).post(create_user))
+        .route("/users", get(list_user).post(create_user))
         .route(
-            "/api/users/:user_id",
+            "/users/:user_id",
             get(get_user).patch(update_user).delete(delete_user),
         )
 }
@@ -24,7 +24,7 @@ struct User {
 }
 
 async fn list_user(ctx: Extension<ApiContext>) -> Json<Vec<User>> {
-    let users = query_as!(User, r#"select * from "user""#)
+    let users = query_as!(User, "select * from users")
         .fetch_all(&ctx.pool)
         .await
         // TODO: error handling
@@ -34,7 +34,7 @@ async fn list_user(ctx: Extension<ApiContext>) -> Json<Vec<User>> {
 }
 
 async fn get_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) -> Json<User> {
-    let user = query_as!(User, r#"select * from "user" where user_id = $1"#, id)
+    let user = query_as!(User, "select * from users where user_id = $1", id)
         .fetch_one(&ctx.pool)
         .await
         // TODO: error handling
@@ -49,7 +49,7 @@ struct CreateUser {
 }
 
 async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<CreateUser>) {
-    query!(r#"insert into "user" (username) values ($1)"#, req.username)
+    query!("insert into users (username) values ($1)", req.username)
         .execute(&ctx.pool)
         .await
         // TODO: error handling
@@ -67,7 +67,7 @@ async fn update_user(
     Json(req): Json<UpdateUser>,
 ) {
     query!(
-        r#"update "user" set username = $2 where user_id = $1"#,
+        "update users set username = $2 where user_id = $1",
         id,
         req.username
     )
@@ -78,7 +78,7 @@ async fn update_user(
 }
 
 async fn delete_user(ctx: Extension<ApiContext>, Path(id): Path<Uuid>) {
-    query!(r#"delete from "user" where user_id = $1"#, id)
+    query!("delete from users where user_id = $1", id)
         .execute(&ctx.pool)
         .await
         // TODO: error handling
