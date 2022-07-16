@@ -16,16 +16,13 @@ pub fn router() -> Router {
 
 async fn follow_user(
     ctx: Extension<ApiContext>,
-    Path((following_user_id, followed_user_id)): Path<(Uuid, Uuid)>,
+    Path((user_id, followed_user_id)): Path<(Uuid, Uuid)>,
 ) {
-    let user = query!(
-        "select user_id from users where user_id = $1",
-        following_user_id
-    )
-    .fetch_one(&ctx.pool)
-    .await
-    // TODO: error handling
-    .unwrap();
+    let user = query!("select user_id from users where user_id = $1", user_id)
+        .fetch_one(&ctx.pool)
+        .await
+        // TODO: error handling
+        .unwrap();
     query!(
         "insert into follows (following_user_id, followed_user_id) values ($1, $2)",
         user.user_id,
@@ -39,16 +36,13 @@ async fn follow_user(
 
 async fn unfollow_user(
     ctx: Extension<ApiContext>,
-    Path((following_user_id, followed_user_id)): Path<(Uuid, Uuid)>,
+    Path((user_id, followed_user_id)): Path<(Uuid, Uuid)>,
 ) {
-    let user = query!(
-        "select user_id from users where user_id = $1",
-        following_user_id
-    )
-    .fetch_one(&ctx.pool)
-    .await
-    // TODO: error handling
-    .unwrap();
+    let user = query!("select user_id from users where user_id = $1", user_id)
+        .fetch_one(&ctx.pool)
+        .await
+        // TODO: error handling
+        .unwrap();
     query!(
         "delete from follows where following_user_id = $1 and followed_user_id = $2",
         user.user_id,
