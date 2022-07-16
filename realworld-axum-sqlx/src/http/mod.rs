@@ -1,4 +1,3 @@
-mod follows;
 mod users;
 
 use crate::config::Config;
@@ -26,5 +25,5 @@ pub async fn serve(config: Config, pool: PgPool) -> anyhow::Result<()> {
 }
 
 fn api_router() -> Router {
-    users::router().merge(follows::router())
+    users::router().merge(users::follows::router())
 }

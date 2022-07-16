@@ -1,3 +1,5 @@
+pub mod follows;
+
 use crate::http::ApiContext;
 use axum::{
     extract::{Extension, Path},
