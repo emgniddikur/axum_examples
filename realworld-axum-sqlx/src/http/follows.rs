@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 pub fn router() -> Router {
     Router::new().route(
-        "/users/:following_user_id/follow/:followed_user_id",
+        "/users/:user_id/follow/:followed_user_id",
         post(follow_user),
     )
 }
