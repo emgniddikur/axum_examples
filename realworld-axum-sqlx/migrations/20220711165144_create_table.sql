@@ -28,3 +28,11 @@ create table articles (
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );
+
+create table article_favorites (
+    user_id uuid not null references users(user_id) on delete cascade,
+    article_id uuid not null references articles(article_id) on delete cascade,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+    primary key (user_id, article_id)
+);
