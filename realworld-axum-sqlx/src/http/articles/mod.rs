@@ -5,7 +5,9 @@ use sqlx::query;
 use uuid::Uuid;
 
 pub fn router() -> Router {
-    Router::new().route("/articles", post(create_article))
+    Router::new()
+        .route("/articles", post(create_article))
+        .route("/articles/:id/favorite", post(favorite_article))
 }
 
 #[derive(Deserialize)]
@@ -32,4 +34,8 @@ async fn create_article(ctx: Extension<ApiContext>, Json(req): Json<CreateArticl
     .execute(&ctx.pool)
     .await
     .unwrap();
+}
+
+async fn favorite_article() {
+    println!("favorite_article");
 }
