@@ -1,7 +1,11 @@
 use crate::http::ApiContext;
-use axum::{extract::Extension, routing::post, Json, Router};
+use axum::{
+    extract::{Extension, Path},
+    routing::post,
+    Json, Router,
+};
 use serde::Deserialize;
-use sqlx::query;
+use sqlx::{query, query_scalar};
 use uuid::Uuid;
 
 pub fn router() -> Router {
@@ -36,6 +40,37 @@ async fn create_article(ctx: Extension<ApiContext>, Json(req): Json<CreateArticl
     .unwrap();
 }
 
-async fn favorite_article() {
-    println!("favorite_article");
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct FavoriteArticle {
+    user_id: Uuid,
+}
+
+async fn favorite_article(
+    ctx: Extension<ApiContext>,
+    Path(id): Path<Uuid>,
+    Json(req): Json<FavoriteArticle>,
+) -> Json<Uuid> {
+    let article_id = query_scalar!(
+        "
+            with selected_article as (
+                select article_id from articles where article_id = $1
+            ),
+            inserted_favorite as (
+                insert into article_favorites (user_id, article_id)
+                select $2, article_id
+                from selected_article
+                on conflict do nothing
+            )
+            select article_id from selected_article
+        ",
+        id,
+        req.user_id,
+    )
+    .fetch_optional(&ctx.pool)
+    .await
+    .unwrap()
+    .unwrap();
+
+    Json(article_id)
 }
