@@ -15,9 +15,9 @@ async fn main() {
     let database_url = std::env::var("DATABASE_URL").unwrap();
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
-    let row = sqlx::query_as!(Expense, "select * from expenses")
+    let rows = sqlx::query_as!(Expense, "select * from expenses")
         .fetch_all(&pool)
         .await
         .unwrap();
-    println!("{:?}", row);
+    println!("{:?}", rows);
 }
