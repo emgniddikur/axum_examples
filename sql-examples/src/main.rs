@@ -22,6 +22,10 @@ async fn insert(pool: &Pool<Postgres>) {
         .execute(pool)
         .await
         .unwrap();
+    sqlx::query("insert into expenses values ('00000000-0000-0000-0000-000000000000', 0, 0)")
+        .execute(pool)
+        .await
+        .unwrap();
 }
 
 async fn update(pool: &Pool<Postgres>) {
