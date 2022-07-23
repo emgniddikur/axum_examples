@@ -1,11 +1,15 @@
 mod articles;
+mod error;
 mod users;
 
 use crate::config::Config;
 use anyhow::Context;
 use axum::{extract::Extension, Router};
+use error::Error;
 use sqlx::PgPool;
 use std::{net::SocketAddr, sync::Arc};
+
+pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Clone)]
 struct ApiContext {

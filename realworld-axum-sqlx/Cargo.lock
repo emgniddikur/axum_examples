@@ -979,6 +979,7 @@ dependencies = [
  "log",
  "serde",
  "sqlx",
+ "thiserror",
  "tokio",
  "uuid",
 ]

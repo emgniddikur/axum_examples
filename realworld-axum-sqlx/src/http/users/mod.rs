@@ -1,13 +1,16 @@
 pub mod follows;
 
-use crate::http::ApiContext;
+use crate::http::{
+    error::{Error, ResultExt},
+    ApiContext, Result,
+};
 use axum::{
     extract::{Extension, Path},
     routing::get,
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
-use sqlx::{query, query_as};
+use sqlx::{query, query_as, query_scalar};
 use uuid::Uuid;
 
 pub fn router() -> Router {
@@ -50,12 +53,24 @@ struct CreateUser {
     username: String,
 }
 
-async fn create_user(ctx: Extension<ApiContext>, Json(req): Json<CreateUser>) {
-    query!("insert into users (username) values ($1)", req.username)
-        .execute(&ctx.pool)
-        .await
-        // TODO: error handling
-        .unwrap();
+async fn create_user(
+    ctx: Extension<ApiContext>,
+    Json(req): Json<CreateUser>,
+) -> Result<Json<User>> {
+    let user_id = query_scalar!(
+        "insert into users (username) values ($1) returning user_id",
+        req.username
+    )
+    .fetch_one(&ctx.pool)
+    .await
+    .on_constraint("user_username_key", |_| {
+        Error::unprocessable_entity([("username", "username taken")])
+    })?;
+
+    Ok(Json(User {
+        user_id,
+        username: req.username,
+    }))
 }
 
 #[derive(Deserialize)]
