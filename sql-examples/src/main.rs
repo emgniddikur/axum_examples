@@ -24,6 +24,13 @@ async fn update(pool: &Pool<Postgres>) {
         .unwrap();
 }
 
+async fn delete(pool: &Pool<Postgres>) {
+    sqlx::query("delete from expenses")
+        .execute(pool)
+        .await
+        .unwrap();
+}
+
 #[async_std::main]
 async fn main() {
     dotenv().ok();
@@ -31,6 +38,8 @@ async fn main() {
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
     // update(&pool).await;
+
+    // delete(&pool).await;
 
     select(&pool).await;
 }
