@@ -8,7 +8,6 @@ async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
 
     let config = Config::parse();
-    println!("{}", config.database_url);
 
     let pool = PgPoolOptions::new().connect(&config.database_url).await?;
 
