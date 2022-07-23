@@ -17,6 +17,13 @@ async fn select(pool: &Pool<Postgres>) {
     println!("{:?}", rows);
 }
 
+async fn insert(pool: &Pool<Postgres>) {
+    sqlx::query("insert into expenses (deposits, withdrawals) values (0, 0)")
+        .execute(pool)
+        .await
+        .unwrap();
+}
+
 async fn update(pool: &Pool<Postgres>) {
     sqlx::query("update expenses set deposits = 0")
         .execute(pool)
@@ -36,6 +43,8 @@ async fn main() {
     dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").unwrap();
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
+
+    // insert(&pool).await;
 
     // update(&pool).await;
 
