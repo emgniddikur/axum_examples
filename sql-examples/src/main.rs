@@ -1,4 +1,4 @@
-mod like;
+mod where_;
 
 use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
@@ -59,5 +59,5 @@ async fn main() {
 
     // select(&pool).await;
 
-    // like::main(&pool).await;
+    // where_::like::main(&pool).await;
 }
