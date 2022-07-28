@@ -1,3 +1,5 @@
+mod like;
+
 use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use uuid::Uuid;
@@ -55,4 +57,6 @@ async fn main() {
     // delete(&pool).await;
 
     select(&pool).await;
+
+    like::main();
 }
