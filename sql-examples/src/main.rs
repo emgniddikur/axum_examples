@@ -57,7 +57,7 @@ async fn main() {
 
     // delete(&pool).await;
 
-    select(&pool).await;
+    // select(&pool).await;
 
-    like::main();
+    like::main(&pool).await;
 }
