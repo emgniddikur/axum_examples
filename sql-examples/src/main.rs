@@ -7,6 +7,7 @@ use uuid::Uuid;
 #[derive(Debug)]
 struct Expense {
     id: Uuid,
+    name: String,
     deposits: i32,
     withdrawals: i32,
 }
