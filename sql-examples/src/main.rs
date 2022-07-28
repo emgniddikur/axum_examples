@@ -21,11 +21,11 @@ async fn select(pool: &Pool<Postgres>) {
 }
 
 async fn insert(pool: &Pool<Postgres>) {
-    sqlx::query("insert into expenses (deposits, withdrawals) values (0, 0)")
+    sqlx::query("insert into expenses (name, deposits, withdrawals) values ('a', 0, 0)")
         .execute(pool)
         .await
         .unwrap();
-    sqlx::query("insert into expenses values ('00000000-0000-0000-0000-000000000000', 0, 0)")
+    sqlx::query("insert into expenses values ('00000000-0000-0000-0000-000000000000', 'b', 0, 0)")
         .execute(pool)
         .await
         .unwrap();
@@ -59,5 +59,5 @@ async fn main() {
 
     // select(&pool).await;
 
-    like::main(&pool).await;
+    // like::main(&pool).await;
 }
