@@ -1,4 +1,5 @@
 pub mod distinct;
+pub mod order_by;
 
 use sqlx::{Pool, Postgres};
 

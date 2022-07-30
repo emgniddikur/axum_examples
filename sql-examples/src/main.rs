@@ -58,6 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // where_::any_all::main(&pool).await;
 
     // select::distinct::main(&pool).await?;
+    // select::order_by::main(&pool).await?;
 
     Ok(())
 }
