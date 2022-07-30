@@ -56,4 +56,6 @@ async fn main() {
     // where_::between::main(&pool).await;
     // where_::in_::main(&pool).await;
     // where_::any_all::main(&pool).await;
+
+    // select::distinct::main(&pool).await;
 }
