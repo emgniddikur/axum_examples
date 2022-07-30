@@ -1,3 +1,4 @@
+mod select;
 mod where_;
 
 use dotenv::dotenv;
