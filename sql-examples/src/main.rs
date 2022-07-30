@@ -39,7 +39,7 @@ async fn delete(pool: &Pool<Postgres>) {
 }
 
 #[async_std::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").unwrap();
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
@@ -57,5 +57,7 @@ async fn main() {
     // where_::in_::main(&pool).await;
     // where_::any_all::main(&pool).await;
 
-    // select::distinct::main(&pool).await;
+    // select::distinct::main(&pool).await?;
+
+    Ok(())
 }
