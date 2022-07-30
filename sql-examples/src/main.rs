@@ -13,14 +13,6 @@ struct Expense {
     withdrawals: i32,
 }
 
-async fn select(pool: &Pool<Postgres>) {
-    let rows = sqlx::query_as!(Expense, "select * from expenses")
-        .fetch_all(pool)
-        .await
-        .unwrap();
-    println!("{:?}", rows);
-}
-
 async fn insert(pool: &Pool<Postgres>) {
     sqlx::query("insert into expenses (name, deposits, withdrawals) values ('a', 0, 0)")
         .execute(pool)
@@ -58,7 +50,7 @@ async fn main() {
 
     // delete(&pool).await;
 
-    // select(&pool).await;
+    // select::select(&pool).await;
 
     // where_::like::main(&pool).await;
     // where_::between::main(&pool).await;
